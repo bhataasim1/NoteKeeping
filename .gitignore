@@ -3,5 +3,3 @@ backend/node_modules
 
 # frontend
 frontend/node_modules
-
-vercel.json
