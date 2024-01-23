@@ -14,6 +14,20 @@ const App = () => {
 
   const BASE_URL = "https://note-keeping-tau.vercel.app";
 
+  const isValidNote = () => {
+    if (!newNote.title.trim() || !newNote.body.trim()) {
+      toast.error('Title and body cannot be empty');
+      return false;
+    }
+
+    if (newNote.title.length < 3 || (newNote.tagline && newNote.tagline.length < 3) || newNote.body.length < 3) {
+      toast.error('Title, tagline, and body should have a minimum of 3 characters');
+      return false;
+    }
+
+    return true;
+  };
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -29,6 +43,11 @@ const App = () => {
   }, []);
 
   const addNote = async () => {
+
+    if (!isValidNote()) {
+      return;
+    }
+
     try {
       const response = await axios.post(`${BASE_URL}/api/notes/create`, newNote);
       setNotes([...notes, response.data]);
@@ -41,6 +60,11 @@ const App = () => {
   };
 
   const updateNote = async () => {
+
+    if (!isValidNote()) {
+      return;
+    }
+    
     try {
       const response = await axios.put(`${BASE_URL}/api/notes/${notes[editingNote]._id}`, newNote);
       const updatedNotes = [...notes];
@@ -119,6 +143,7 @@ const App = () => {
           className="mb-2 w-full p-2 border rounded"
           type="text"
           placeholder="Title"
+          required
           value={newNote.title}
           onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
         />
@@ -126,12 +151,14 @@ const App = () => {
           className="mb-2 w-full p-2 border rounded"
           type="text"
           placeholder="Tagline"
+          required
           value={newNote.tagline}
           onChange={(e) => setNewNote({ ...newNote, tagline: e.target.value })}
         />
         <textarea
           className="mb-2 w-full p-2 border rounded"
           placeholder="Body"
+          required
           value={newNote.body}
           onChange={(e) => setNewNote({ ...newNote, body: e.target.value })}
         />
