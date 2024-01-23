@@ -12,10 +12,12 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(6); //number of notes per page
 
+  const BASE_URL = "https://note-keeping-tau.vercel.app";
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/notes');
+        const response = await axios.get(`${BASE_URL}/api/notes`);
         setNotes(response.data);
       } catch (error) {
         console.error('Error fetching notes:', error);
@@ -28,7 +30,7 @@ const App = () => {
 
   const addNote = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/notes/create', newNote);
+      const response = await axios.post(`${BASE_URL}/api/notes/create`, newNote);
       setNotes([...notes, response.data]);
       setNewNote({ title: '', tagline: '', body: '', isPinned: false });
       toast.success('Note added successfully');
@@ -40,7 +42,7 @@ const App = () => {
 
   const updateNote = async () => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/notes/${notes[editingNote]._id}`, newNote);
+      const response = await axios.put(`${BASE_URL}/api/notes/${notes[editingNote]._id}`, newNote);
       const updatedNotes = [...notes];
       updatedNotes[editingNote] = response.data;
       setNotes(updatedNotes);
@@ -55,7 +57,7 @@ const App = () => {
 
   const deleteNote = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/notes/${notes[id]._id}`);
+      await axios.delete(`${BASE_URL}/api/notes/${notes[id]._id}`);
       const updatedNotes = [...notes];
       updatedNotes.splice(id, 1);
       setNotes(updatedNotes);
@@ -79,7 +81,7 @@ const App = () => {
   const togglePin = async (index) => {
     try {
       const updatedNote = { ...notes[index], isPinned: !notes[index].isPinned };
-      const response = await axios.put(`http://localhost:8000/api/notes/${notes[index]._id}`, updatedNote);
+      const response = await axios.put(`${BASE_URL}/api/notes/${notes[index]._id}`, updatedNote);
 
       const updatedNotes = [...notes];
       updatedNotes[index] = response.data;
