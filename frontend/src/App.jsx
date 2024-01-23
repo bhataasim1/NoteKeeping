@@ -61,6 +61,12 @@ const App = () => {
       const response = await axios.post(`${BASE_URL}/api/notes/create`, newNote);
       setNotes([...notes, response.data]);
       toast.success('Note added successfully');
+      setNewNote({
+        title: '',
+        tagline: '',
+        body: '',
+        isPinned: false,
+      });
     } catch (error) {
       handleApiError(error, 'Error adding note');
     }
@@ -78,6 +84,12 @@ const App = () => {
       setNotes(updatedNotes);
       setEditingNote(null);
       toast.success('Note updated successfully');
+      setNewNote({
+        title: '',
+        tagline: '',
+        body: '',
+        isPinned: false,
+      });
     } catch (error) {
       handleApiError(error, 'Error updating note');
     }
