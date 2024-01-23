@@ -28,6 +28,16 @@ const App = () => {
     return true;
   };
 
+  const handleApiError = (error, defaultMessage) => {
+    if (error.response) {
+      toast.error(`Error: ${error.response.data.error || defaultMessage}`);
+    } else if (error.request) {
+      toast.error('No response from the server. Please try again.');
+    } else {
+      toast.error('Error sending the request. Please try again.');
+    }
+  };
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -43,7 +53,6 @@ const App = () => {
   }, []);
 
   const addNote = async () => {
-
     if (!isValidNote()) {
       return;
     }
@@ -51,31 +60,26 @@ const App = () => {
     try {
       const response = await axios.post(`${BASE_URL}/api/notes/create`, newNote);
       setNotes([...notes, response.data]);
-      setNewNote({ title: '', tagline: '', body: '', isPinned: false });
       toast.success('Note added successfully');
     } catch (error) {
-      console.error('Error adding note:', error);
-      toast.error('Error adding note');
+      handleApiError(error, 'Error adding note');
     }
   };
 
   const updateNote = async () => {
-
     if (!isValidNote()) {
       return;
     }
-    
+
     try {
       const response = await axios.put(`${BASE_URL}/api/notes/${notes[editingNote]._id}`, newNote);
       const updatedNotes = [...notes];
       updatedNotes[editingNote] = response.data;
       setNotes(updatedNotes);
-      setNewNote({ title: '', tagline: '', body: '', isPinned: false });
       setEditingNote(null);
       toast.success('Note updated successfully');
     } catch (error) {
-      console.error('Error updating note:', error);
-      toast.error('Error updating note');
+      handleApiError(error, 'Error updating note');
     }
   };
 
@@ -87,8 +91,7 @@ const App = () => {
       setNotes(updatedNotes);
       toast.success('Note deleted successfully');
     } catch (error) {
-      console.error('Error deleting note:', error);
-      toast.error('Error deleting note');
+      handleApiError(error, 'Error deleting note');
     }
   };
 
